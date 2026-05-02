@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ripe Tomatoes - Movie Reviews!!!</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: #000080;
+    background-image:
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(0,0,128,0.3) 10px,
+        rgba(0,0,128,0.3) 20px
+      ),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='2' cy='2' r='1' fill='%23003399' opacity='0.4'/%3E%3C/svg%3E");
+    font-family: 'VT323', monospace;
+    color: #000;
+    min-height: 100vh;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M0 0 L16 6 L8 8 L6 16 Z' fill='%23ff0000'/%3E%3C/svg%3E") 0 0, auto;
+  }
+
+  /* MARQUEE BAR */
+  .marquee-bar {
+    background: #ff0000;
+    color: #ffff00;
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    padding: 4px 0;
+    overflow: hidden;
+    border-top: 3px solid #800000;
+    border-bottom: 3px solid #800000;
+  }
+  .marquee-inner {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 18s linear infinite;
+  }
+  @keyframes marquee {
+    from { transform: translateX(100vw); }
+    to { transform: translateX(-100%); }
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(180deg, #c0c0c0 0%, #808080 40%, #c0c0c0 100%);
+    border-bottom: 4px solid #ff0000;
+    padding: 0;
+  }
+  .header-top {
+    background: linear-gradient(90deg, #cc0000, #ff4400, #cc0000);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px ridge #800000;
+  }
+  .site-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(14px, 3vw, 26px);
+    color: #ffff00;
+    text-shadow: 3px 3px 0 #800000, -1px -1px 0 #ff6600;
+    letter-spacing: 2px;
+  }
+  .tomato-emoji {
+    font-size: 40px;
+    animation: wobble 2s ease-in-out infinite;
+    display: inline-block;
+    margin-right: 10px;
+  }
+  @keyframes wobble {
+    0%,100% { transform: rotate(-5deg) scale(1); }
+    50% { transform: rotate(5deg) scale(1.1); }
+  }
+  .header-sub {
+    background: #000080;
+    color: #00ffff;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    text-align: center;
+    padding: 6px;
+    letter-spacing: 3px;
+    border-top: 2px solid #0000ff;
+  }
+
+  /* NAV */
+  nav {
+    background: #c0c0c0;
+    border-bottom: 3px ridge #808080;
+    padding: 6px 12px;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .nav-btn {
+    background: linear-gradient(180deg, #e0e0e0 0%, #a0a0a0 50%, #c0c0c0 100%);
+    border: 2px outset #ffffff;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    padding: 3px 14px;
+    cursor: pointer;
+    color: #000;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .nav-btn:hover {
+    background: linear-gradient(180deg, #ffff99 0%, #ffcc00 50%, #ffff99 100%);
+    border-color: #ffff00;
+  }
+  .nav-btn:active { border: 2px inset #808080; }
+
+  /* MAIN LAYOUT */
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 16px 12px;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 16px;
+  }
+  @media (max-width: 680px) {
+    .page { grid-template-columns: 1fr; }
+  }
+
+  /* WINDOWS */
+  .win {
+    border: 3px outset #c0c0c0;
+    background: #c0c0c0;
+    margin-bottom: 14px;
+  }
+  .win-title {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: #ffffff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    letter-spacing: 0;
+  }
+  .win-btns { display: flex; gap: 2px; }
+  .win-btn {
+    width: 14px; height: 14px;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    font-size: 9px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-family: monospace;
+    color: #000;
+  }
+  .win-body { background: #ffffff; border: 2px inset #808080; padding: 14px; }
+
+  /* LEADERBOARD */
+  .lb-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+  }
+  .lb-table th {
+    background: #000080;
+    color: #ffff00;
+    padding: 6px 10px;
+    text-align: left;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    border: 1px solid #0000cc;
+    font-weight: normal;
+  }
+  .lb-table td {
+    padding: 6px 10px;
+    border: 1px solid #c0c0c0;
+    vertical-align: top;
+  }
+  .lb-table tr:nth-child(odd) td { background: #f0f0f0; }
+  .lb-table tr:nth-child(even) td { background: #e0e8ff; }
+  .lb-table tr:first-child td { background: #fffff0 !important; }
+  .lb-table tr:hover td { background: #ffff99 !important; }
+  .rank-num { color: #cc0000; font-weight: bold; }
+  .movie-title-cell { color: #000080; font-size: 22px; }
+  .star-cell { color: #ff6600; letter-spacing: 1px; font-size: 20px; }
+  .desc-cell { color: #333; font-size: 17px; font-style: italic; max-width: 260px; }
+  .reviewer-cell { color: #006600; font-size: 17px; }
+  .no-reviews {
+    text-align: center;
+    padding: 30px;
+    color: #808080;
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    background: #f0f0f0;
+  }
+
+  /* FORM */
+  .form-row { margin-bottom: 14px; }
+  .form-label {
+    display: block;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: #000080;
+    margin-bottom: 6px;
+  }
+  .form-input {
+    width: 100%;
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    border: 2px inset #808080;
+    background: #ffffff;
+    padding: 6px 10px;
+    color: #000;
+    outline: none;
+  }
+  .form-input:focus {
+    background: #ffffd0;
+    border-color: #0000ff;
+  }
+  textarea.form-input { min-height: 80px; resize: vertical; }
+
+  /* STARS */
+  .star-row { display: flex; gap: 4px; align-items: center; }
+  .s-btn {
+    font-size: 30px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 2px;
+    color: #ccc;
+    line-height: 1;
+    transition: color 0.1s, transform 0.1s;
+  }
+  .s-btn:hover { transform: scale(1.3); }
+  .s-btn.lit { color: #ff6600; text-shadow: 0 0 6px #ffcc00; }
+  .star-hint {
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    color: #808080;
+    margin-left: 8px;
+  }
+
+  /* SUBMIT BUTTON */
+  .submit-btn {
+    background: linear-gradient(180deg, #ffcc00 0%, #ff6600 50%, #cc0000 100%);
+    border: 3px outset #ffff00;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #ffffff;
+    text-shadow: 1px 1px 0 #800000;
+    padding: 10px 20px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 8px;
+    letter-spacing: 1px;
+    transition: filter 0.1s;
+  }
+  .submit-btn:hover { filter: brightness(1.15); border-color: #ffff99; }
+  .submit-btn:active { border: 3px inset #800000; }
+
+  /* SIDEBAR */
+  .under-con {
+    background: #ffff00;
+    border: 3px outset #c0c0c0;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 14px;
+    animation: blink-border 1s step-end infinite;
+  }
+  @keyframes blink-border {
+    0%,100% { border-color: #ff0000; }
+    50% { border-color: #0000ff; }
+  }
+  .under-con p {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: #cc0000;
+    margin-top: 6px;
+    line-height: 1.6;
+  }
+  .con-icon { font-size: 28px; animation: spin 2s linear infinite; display: inline-block; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* STATS */
+  .stat-list { list-style: none; font-family: 'VT323', monospace; font-size: 21px; }
+  .stat-list li {
+    padding: 6px 0;
+    border-bottom: 1px dotted #808080;
+    display: flex;
+    justify-content: space-between;
+  }
+  .stat-list li:last-child { border-bottom: none; }
+  .stat-val { color: #cc0000; font-weight: bold; }
+
+  /* TIP */
+  .tip-box {
+    background: #ffffcc;
+    border: 3px inset #c0c0c0;
+    padding: 14px;
+    text-align: center;
+  }
+  .tip-dollar {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 30px;
+    color: #006600;
+    text-shadow: 2px 2px 0 #00cc00;
+    display: block;
+    margin-bottom: 8px;
+    animation: pulse-green 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-green {
+    0%,100% { text-shadow: 2px 2px 0 #00cc00; }
+    50% { text-shadow: 2px 2px 8px #00ff00, 0 0 20px #00ff00; }
+  }
+  .tip-desc {
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+  .tip-btn {
+    background: linear-gradient(180deg, #99ff99 0%, #00cc00 50%, #006600 100%);
+    border: 3px outset #ccffcc;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: #003300;
+    padding: 8px 16px;
+    cursor: pointer;
+    width: 100%;
+    transition: filter 0.1s;
+  }
+  .tip-btn:hover { filter: brightness(1.2); }
+  .tip-btn:active { border: 3px inset #006600; }
+
+  /* HOT PICKS */
+  .hot-item {
+    padding: 8px 0;
+    border-bottom: 1px dotted #aaa;
+    font-family: 'VT323', monospace;
+  }
+  .hot-item:last-child { border: none; }
+  .hot-movie { font-size: 20px; color: #000080; }
+  .hot-stars-small { color: #ff6600; font-size: 16px; }
+
+  /* MODAL */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+  }
+  .overlay.open { display: flex; }
+  .modal-win {
+    background: #c0c0c0;
+    border: 3px outset #ffffff;
+    width: 360px;
+    max-width: 95vw;
+  }
+  .modal-body {
+    background: #ffffff;
+    border: 2px inset #808080;
+    margin: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+  .modal-amount {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 36px;
+    color: #006600;
+    margin: 10px 0 16px;
+    text-shadow: 2px 2px 0 #00cc00;
+  }
+  .modal-text {
+    font-family: 'VT323', monospace;
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .modal-row { display: flex; gap: 8px; margin: 8px; }
+  .modal-ok {
+    flex: 1;
+    background: linear-gradient(180deg, #99ff99, #009900);
+    border: 3px outset #ccffcc;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: #003300;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .modal-ok:active { border: 3px inset #006600; }
+  .modal-cancel-btn {
+    flex: 1;
+    background: linear-gradient(180deg, #e0e0e0, #a0a0a0);
+    border: 3px outset #ffffff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: #000;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .modal-cancel-btn:active { border: 3px inset #808080; }
+
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #000080;
+    color: #ffff00;
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    padding: 10px 24px;
+    border: 3px outset #0000ff;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 9999;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* FOOTER */
+  footer {
+    background: #000080;
+    color: #c0c0c0;
+    text-align: center;
+    padding: 14px;
+    border-top: 4px solid #ff0000;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+  }
+  footer a { color: #00ffff; }
+  .blink { animation: blink 1s step-end infinite; }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+  .hit-counter {
+    background: #000;
+    color: #00ff00;
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    padding: 4px 12px;
+    border: 2px inset #008800;
+    display: inline-block;
+    margin-top: 8px;
+    letter-spacing: 3px;
+  }
+
+  ::-webkit-scrollbar { width: 16px; }
+  ::-webkit-scrollbar-track { background: #c0c0c0; border-left: 1px solid #808080; }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(90deg, #e0e0e0, #a0a0a0); border: 2px outset #ffffff; }
+  ::-webkit-scrollbar-button { background: #c0c0c0; border: 2px outset #ffffff; height: 16px; }
+</style>
+</head>
+<body>
+
+<div class="marquee-bar">
+  <span class="marquee-inner">
+    🍅 WELCOME TO RIPE TOMATOES — THE #1 MOVIE REVIEW SITE ON THE WEB!!! &nbsp;&nbsp;&nbsp; ★ SUBMIT YOUR REVIEW TODAY! &nbsp;&nbsp;&nbsp; 🎬 NEW REVIEWS ADDED DAILY! &nbsp;&nbsp;&nbsp; 💻 BEST VIEWED IN NETSCAPE NAVIGATOR 4.0 AT 800x600 &nbsp;&nbsp;&nbsp; 🍅 WELCOME TO RIPE TOMATOES — THE #1 MOVIE REVIEW SITE ON THE WEB!!!
+  </span>
+</div>
+
+<header>
+  <div class="header-top">
+    <div style="display:flex;align-items:center;">
+      <span class="tomato-emoji">🍅</span>
+      <span class="site-title">RIPE TOMATOES</span>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-family:'VT323',monospace;font-size:16px;color:#ffff99;">Est. 1997</div>
+      <div style="font-family:'VT323',monospace;font-size:14px;color:#ffcc99;">Your #1 Source For Reviews!!</div>
+    </div>
+  </div>
+  <div class="header-sub">★ THE INTERNET'S FRESHEST MOVIE REVIEWS ★</div>
+</header>
+
+<nav>
+  <a class="nav-btn" href="#">🏠 HOME</a>
+  <a class="nav-btn" href="#">🎬 MOVIES</a>
+  <a class="nav-btn" href="#">⭐ TOP RATED</a>
+  <a class="nav-btn" href="#">📧 CONTACT US</a>
+  <a class="nav-btn" href="#">💬 GUESTBOOK</a>
+  <a class="nav-btn" href="#">🔗 COOL LINKS</a>
+</nav>
+
+<div class="page">
+  <div>
+
+    <div class="win">
+      <div class="win-title">
+        <span>🍅 FRESH PICKS — TOP REVIEWS</span>
+        <div class="win-btns">
+          <div class="win-btn">_</div>
+          <div class="win-btn">□</div>
+          <div class="win-btn">✕</div>
+        </div>
+      </div>
+      <div class="win-body" style="padding:0;overflow-x:auto;">
+        <table class="lb-table" id="lb-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>🎬 MOVIE</th>
+              <th>⭐ RATING</th>
+              <th>👤 REVIEWER</th>
+              <th>💬 REVIEW</th>
+            </tr>
+          </thead>
+          <tbody id="lb-body">
+            <tr><td colspan="5" class="no-reviews">🍅 No reviews yet! Be the first!!!</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">
+        <span>✏️ SUBMIT YOUR REVIEW</span>
+        <div class="win-btns">
+          <div class="win-btn">_</div>
+          <div class="win-btn">□</div>
+          <div class="win-btn">✕</div>
+        </div>
+      </div>
+      <div class="win-body">
+        <div class="form-row">
+          <label class="form-label">🎬 MOVIE NAME:</label>
+          <input type="text" class="form-input" id="movie-name" placeholder="Type the movie title here..." maxlength="80">
+        </div>
+        <div class="form-row">
+          <label class="form-label">👤 YOUR NAME:</label>
+          <input type="text" class="form-input" id="your-name" placeholder="Your name or screen name..." maxlength="40">
+        </div>
+        <div class="form-row">
+          <label class="form-label">⭐ STAR RATING: (click a star!)</label>
+          <div class="star-row" id="star-row">
+            <button class="s-btn" data-v="1">★</button>
+            <button class="s-btn" data-v="2">★</button>
+            <button class="s-btn" data-v="3">★</button>
+            <button class="s-btn" data-v="4">★</button>
+            <button class="s-btn" data-v="5">★</button>
+            <span class="star-hint" id="star-hint">— click to rate!</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">💬 YOUR REVIEW:</label>
+          <textarea class="form-input" id="review-desc" placeholder="Tell everyone what you thought about this movie!! (optional)"></textarea>
+        </div>
+        <button class="submit-btn" id="submit-btn">🍅 POST MY REVIEW!!! 🍅</button>
+      </div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">
+        <span>💰 SUPPORT THIS SITE!</span>
+        <div class="win-btns">
+          <div class="win-btn">_</div>
+          <div class="win-btn">□</div>
+          <div class="win-btn">✕</div>
+        </div>
+      </div>
+      <div class="win-body">
+        <div class="tip-box">
+          <span class="tip-dollar">$1.00</span>
+          <p class="tip-desc">Love Ripe Tomatoes? Send us a $1 tip to keep the site running!! Every dollar helps us buy more bandwidth!! 😄</p>
+          <button class="tip-btn" id="tip-open-btn">💲 SEND $1 TIP NOW!! 💲</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div>
+    <div class="under-con">
+      <div class="con-icon">⚙️</div>
+      <p>UNDER<br>CONSTRUCTION!<br>More features<br>coming SOON!!</p>
+    </div>
+
+    <div class="win" style="margin-bottom:14px;">
+      <div class="win-title">
+        <span>📊 SITE STATS</span>
+        <div class="win-btns"><div class="win-btn">✕</div></div>
+      </div>
+      <div class="win-body">
+        <ul class="stat-list">
+          <li><span>Total Reviews:</span> <span class="stat-val" id="stat-reviews">0</span></li>
+          <li><span>Avg Rating:</span> <span class="stat-val" id="stat-avg">—</span></li>
+          <li><span>Tips Sent:</span> <span class="stat-val" id="stat-tips">$0</span></li>
+          <li><span>Online Now:</span> <span class="stat-val blink">👤 1</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="win" style="margin-bottom:14px;">
+      <div class="win-title">
+        <span>🔥 TOP RATED</span>
+        <div class="win-btns"><div class="win-btn">✕</div></div>
+      </div>
+      <div class="win-body" id="hot-picks">
+        <div style="font-family:'VT323',monospace;font-size:18px;color:#808080;text-align:center;padding:10px 0;">No reviews yet!</div>
+      </div>
+    </div>
+
+    <div class="win">
+      <div class="win-title">
+        <span>🔗 WEB RING</span>
+        <div class="win-btns"><div class="win-btn">✕</div></div>
+      </div>
+      <div class="win-body" style="text-align:center;">
+        <div style="font-family:'VT323',monospace;font-size:16px;color:#000080;line-height:1.8;">
+          <div style="font-size:22px;margin-bottom:6px;">🎬 Movie Fans Ring 🎬</div>
+          <div>← <a href="#" style="color:#0000cc;">Prev</a> | <a href="#" style="color:#0000cc;">Next</a> →</div>
+          <div style="margin-top:8px;font-size:14px;color:#808080;">Member since 1997</div>
+        </div>
+        <hr style="margin:10px 0;border:1px inset #c0c0c0;">
+        <div style="font-family:'VT323',monospace;font-size:15px;color:#333;">
+          Best viewed:<br>
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='31'%3E%3Crect width='88' height='31' fill='%23000080'/%3E%3Ctext x='4' y='12' fill='%23ffffff' font-family='monospace' font-size='8' font-weight='bold'%3ENetscape%3C/text%3E%3Ctext x='4' y='24' fill='%2300ffff' font-family='monospace' font-size='8'%3ENavigator%3C/text%3E%3C/svg%3E" alt="Netscape" style="margin-top:4px;border:1px solid #000;">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>© 1997-1999 RipeTomatoes.com — All Rights Reserved!!! &nbsp;|&nbsp; <span class="blink">★ NEW ★</span> Email us at webmaster@ripetomatoes.com</div>
+  <div style="margin-top:8px;font-size:16px;color:#aaaaff;">This page has been visited:</div>
+  <div class="hit-counter" id="hit-counter">000000</div>
+  <div style="margin-top:8px;font-size:15px;">times since July 4, 1997!! Thanks for visiting!! 🍅🍅🍅</div>
+</footer>
+
+<div class="overlay" id="tip-overlay">
+  <div class="modal-win">
+    <div class="win-title">
+      <span>💰 SEND A TIP!</span>
+      <div class="win-btns">
+        <div class="win-btn" id="tip-close-x">✕</div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div style="font-family:'VT323',monospace;font-size:22px;color:#000080;margin-bottom:6px;">Support Ripe Tomatoes!!</div>
+      <div class="modal-amount">$1.00</div>
+      <p class="modal-text">Send a $1 tip to help keep this movie review site alive!! Your support means the world to us!! 🙏🍅</p>
+    </div>
+    <div class="modal-row">
+      <button class="modal-ok" id="tip-confirm">✅ SEND TIP!</button>
+      <button class="modal-cancel-btn" id="tip-cancel">❌ CANCEL</button>
+    </div>
+    <div style="font-family:'VT323',monospace;font-size:14px;color:#808080;text-align:center;padding:6px;">(simulated — no real payment)</div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  let reviews = JSON.parse(localStorage.getItem('rt_reviews_v2') || '[]');
+  let tips = parseInt(localStorage.getItem('rt_tips_v2') || '0');
+  let hits = parseInt(localStorage.getItem('rt_hits') || '0') + 1;
+  let selectedStars = 0;
+  localStorage.setItem('rt_hits', hits);
+
+  document.getElementById('hit-counter').textContent = String(hits).padStart(6, '0');
+
+  function save() { localStorage.setItem('rt_reviews_v2', JSON.stringify(reviews)); }
+  function saveTips() { localStorage.setItem('rt_tips_v2', tips); }
+
+  function starsHtml(n) {
+    return '★'.repeat(n) + '☆'.repeat(5 - n);
+  }
+
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('lb-body');
+    const hot = document.getElementById('hot-picks');
+    const sorted = [...reviews].sort((a, b) => b.stars - a.stars || b.ts - a.ts);
+    if (!sorted.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="no-reviews">🍅 No reviews yet! Be the first!!!</td></tr>';
+      hot.innerHTML = '<div style="font-family:VT323,monospace;font-size:18px;color:#808080;text-align:center;padding:10px 0;">No reviews yet!</div>';
+      return;
+    }
+    tbody.innerHTML = sorted.map((r, i) => `
+      <tr>
+        <td class="rank-num">#${i + 1}</td>
+        <td class="movie-title-cell">${esc(r.movie)}</td>
+        <td class="star-cell">${starsHtml(r.stars)}</td>
+        <td class="reviewer-cell">${esc(r.name)}</td>
+        <td class="desc-cell">${r.desc ? '"' + esc(r.desc.substring(0, 80)) + (r.desc.length > 80 ? '…' : '"') : '<span style="color:#aaa">—</span>'}</td>
+      </tr>
+    `).join('');
+
+    hot.innerHTML = sorted.slice(0, 5).map(r => `
+      <div class="hot-item">
+        <div class="hot-movie">🍅 ${esc(r.movie)}</div>
+        <div class="hot-stars-small">${starsHtml(r.stars)} <span style="color:#666;font-size:14px;">by ${esc(r.name)}</span></div>
+      </div>
+    `).join('');
+  }
+
+  function updateStats() {
+    document.getElementById('stat-reviews').textContent = reviews.length;
+    document.getElementById('stat-tips').textContent = '$' + tips;
+    if (reviews.length) {
+      const avg = reviews.reduce((s, r) => s + r.stars, 0) / reviews.length;
+      document.getElementById('stat-avg').textContent = avg.toFixed(1) + ' ⭐';
+    } else {
+      document.getElementById('stat-avg').textContent = '—';
+    }
+  }
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  const sBtns = document.querySelectorAll('.s-btn');
+  const hints = ['Terrible!', 'Not great', 'OK I guess', 'Pretty good!!', 'AWESOME!!!'];
+  sBtns.forEach(btn => {
+    btn.addEventListener('mouseenter', () => {
+      const v = parseInt(btn.dataset.v);
+      sBtns.forEach(s => s.classList.toggle('lit', parseInt(s.dataset.v) <= v));
+      document.getElementById('star-hint').textContent = hints[v - 1];
+    });
+    btn.addEventListener('mouseleave', () => {
+      sBtns.forEach(s => s.classList.toggle('lit', parseInt(s.dataset.v) <= selectedStars));
+      document.getElementById('star-hint').textContent = selectedStars ? hints[selectedStars - 1] : '— click to rate!';
+    });
+    btn.addEventListener('click', () => {
+      selectedStars = parseInt(btn.dataset.v);
+      sBtns.forEach(s => s.classList.toggle('lit', parseInt(s.dataset.v) <= selectedStars));
+      document.getElementById('star-hint').textContent = hints[selectedStars - 1];
+    });
+  });
+
+  document.getElementById('submit-btn').addEventListener('click', () => {
+    const movie = document.getElementById('movie-name').value.trim();
+    const name = document.getElementById('your-name').value.trim();
+    const desc = document.getElementById('review-desc').value.trim();
+    if (!movie) { toast('⚠️ Please enter a movie name!!'); return; }
+    if (!name) { toast('⚠️ Please enter your name!!'); return; }
+    if (!selectedStars) { toast('⚠️ Please pick a star rating!!'); return; }
+    reviews.unshift({ movie, name, desc, stars: selectedStars, ts: Date.now() });
+    save();
+    document.getElementById('movie-name').value = '';
+    document.getElementById('your-name').value = '';
+    document.getElementById('review-desc').value = '';
+    selectedStars = 0;
+    sBtns.forEach(s => s.classList.remove('lit'));
+    document.getElementById('star-hint').textContent = '— click to rate!';
+    renderTable();
+    updateStats();
+    toast('🍅 Review posted!! Thanks!!!');
+    document.querySelector('.win').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  document.getElementById('tip-open-btn').addEventListener('click', () => {
+    document.getElementById('tip-overlay').classList.add('open');
+  });
+  ['tip-cancel', 'tip-close-x'].forEach(id => {
+    document.getElementById(id).addEventListener('click', () => {
+      document.getElementById('tip-overlay').classList.remove('open');
+    });
+  });
+  document.getElementById('tip-confirm').addEventListener('click', () => {
+    tips++;
+    saveTips();
+    updateStats();
+    document.getElementById('tip-overlay').classList.remove('open');
+    toast('💰 Tip sent!! Thank you SO MUCH!!!');
+  });
+  document.getElementById('tip-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('tip-overlay'))
+      document.getElementById('tip-overlay').classList.remove('open');
+  });
+
+  renderTable();
+  updateStats();
+</script>
+</body>
+</html>
